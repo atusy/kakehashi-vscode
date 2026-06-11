@@ -73,11 +73,7 @@ export async function activate(
     }),
   );
 
-  try {
-    await startClient(context);
-  } catch (error) {
-    await handleStartError(error, startErrorUi);
-  }
+  await startClientSafely(context);
 }
 
 export async function deactivate(): Promise<void> {
@@ -133,6 +129,12 @@ async function restartClient(
   context: vscode.ExtensionContext,
 ): Promise<void> {
   await stopClient();
+  await startClientSafely(context);
+}
+
+async function startClientSafely(
+  context: vscode.ExtensionContext,
+): Promise<void> {
   try {
     await startClient(context);
   } catch (error) {
