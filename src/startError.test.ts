@@ -36,3 +36,15 @@ it("offers the download page when the executable is missing", async () => {
   expect(shown).toHaveLength(1);
   expect(shown[0].actions).toContain("Visit download page");
 });
+
+it("opens the releases page when the user picks the download action", async () => {
+  const { ui, opened } = fakeUi("Visit download page");
+  await handleStartError("Error: spawn kakehashi ENOENT", ui);
+  expect(opened).toEqual(["https://github.com/atusy/kakehashi/releases"]);
+});
+
+it("does not open anything when the user dismisses the dialog", async () => {
+  const { ui, opened } = fakeUi(undefined);
+  await handleStartError("Error: spawn kakehashi ENOENT", ui);
+  expect(opened).toEqual([]);
+});

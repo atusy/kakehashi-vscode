@@ -19,8 +19,11 @@ export async function handleStartError(
     await ui.showErrorMessage(`Failed to start kakehashi: ${message}`);
     return;
   }
-  await ui.showErrorMessage(
+  const action = await ui.showErrorMessage(
     "kakehashi executable not found. Download it and put it on PATH, or set kakehashi.command to an absolute path.",
     "Visit download page",
   );
+  if (action === "Visit download page") {
+    await ui.openExternal("https://github.com/atusy/kakehashi/releases");
+  }
 }
