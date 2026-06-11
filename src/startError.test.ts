@@ -17,6 +17,16 @@ function fakeUi(selectedAction?: string) {
   return { ui, shown, opened };
 }
 
+it("reports other start failures without offering the download page", async () => {
+  const { ui, shown } = fakeUi();
+  await handleStartError(new Error("Connection to server got closed."), ui);
+  expect(shown).toHaveLength(1);
+  expect(shown[0].message).toBe(
+    "Failed to start kakehashi: Connection to server got closed.",
+  );
+  expect(shown[0].actions).toHaveLength(0);
+});
+
 it("offers the download page when the executable is missing", async () => {
   const { ui, shown } = fakeUi();
   await handleStartError(

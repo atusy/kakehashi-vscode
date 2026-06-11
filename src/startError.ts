@@ -6,10 +6,19 @@ export interface StartErrorUi {
   openExternal(url: string): Thenable<boolean>;
 }
 
+export function formatError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 export async function handleStartError(
-  _error: unknown,
+  error: unknown,
   ui: StartErrorUi,
 ): Promise<void> {
+  const message = formatError(error);
+  if (!message.includes("ENOENT")) {
+    await ui.showErrorMessage(`Failed to start kakehashi: ${message}`);
+    return;
+  }
   await ui.showErrorMessage(
     "kakehashi executable not found. Download it and put it on PATH, or set kakehashi.command to an absolute path.",
     "Visit download page",
