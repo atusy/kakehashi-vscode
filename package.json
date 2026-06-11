@@ -105,6 +105,7 @@
     "compile": "node esbuild.js",
     "watch": "node esbuild.js --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "vscode:prepublish": "npm run typecheck && node esbuild.js --production"
   },
   "dependencies": {
@@ -114,6 +115,7 @@
     "@types/node": "^25.0.0",
     "@types/vscode": "^1.100.0",
     "esbuild": "^0.28.0",
-    "typescript": "^6.0.0"
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.8"
   }
 }
