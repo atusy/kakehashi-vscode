@@ -60,6 +60,10 @@ Changing any of these settings restarts the language client automatically.
 - VSCode `>= 1.100.0`
 - The [kakehashi](https://github.com/atusy/kakehashi) binary on `PATH` (or set `kakehashi.command` to an absolute path)
 
+If the executable is missing, the extension shows a dialog with a
+**Visit download page** button that opens the
+[GitHub Releases](https://github.com/atusy/kakehashi/releases) page.
+
 ## License
 
 MIT
