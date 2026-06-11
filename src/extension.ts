@@ -6,6 +6,7 @@ import {
   DocumentFilter,
   Trace,
 } from "vscode-languageclient/node";
+import { handleStartError, StartErrorUi } from "./startError";
 
 const FIRST_RUN_KEY = "kakehashi.firstRunNoticeShown";
 
@@ -38,6 +39,12 @@ interface KakehashiConfig {
 
 let client: LanguageClient | undefined;
 
+const startErrorUi: StartErrorUi = {
+  showErrorMessage: (message, ...actions) =>
+    vscode.window.showErrorMessage(message, ...actions),
+  openExternal: (url) => vscode.env.openExternal(vscode.Uri.parse(url)),
+};
+
 export async function activate(
   context: vscode.ExtensionContext,
 ): Promise<void> {
@@ -69,9 +76,7 @@ export async function activate(
   try {
     await startClient(context);
   } catch (error) {
-    void vscode.window.showErrorMessage(
-      `Failed to start kakehashi: ${formatError(error)}`,
-    );
+    await handleStartError(error, startErrorUi);
   }
 }
 
@@ -128,7 +133,11 @@ async function restartClient(
   context: vscode.ExtensionContext,
 ): Promise<void> {
   await stopClient();
-  await startClient(context);
+  try {
+    await startClient(context);
+  } catch (error) {
+    await handleStartError(error, startErrorUi);
+  }
 }
 
 function getConfiguration(): KakehashiConfig {
@@ -226,10 +235,6 @@ function normalizeDocumentSelector(
       ? ({ language: entry } as DocumentFilter)
       : (entry as DocumentFilter),
   );
-}
-
-function formatError(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }
 
 async function maybeShowFirstRunNotice(
