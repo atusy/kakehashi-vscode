@@ -6,6 +6,10 @@ export interface StartErrorUi {
   openExternal(url: string): Thenable<boolean>;
 }
 
+export function isStartFailureNotification(message: string): boolean {
+  return message.endsWith("couldn't create connection to server.");
+}
+
 export function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }

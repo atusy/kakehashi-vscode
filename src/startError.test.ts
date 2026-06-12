@@ -1,5 +1,9 @@
 import { expect, it } from "vitest";
-import { handleStartError, StartErrorUi } from "./startError";
+import {
+  handleStartError,
+  isStartFailureNotification,
+  StartErrorUi,
+} from "./startError";
 
 function fakeUi(selectedAction?: string) {
   const shown: { message: string; actions: string[] }[] = [];
@@ -47,4 +51,18 @@ it("does not open anything when the user dismisses the dialog", async () => {
   const { ui, opened } = fakeUi(undefined);
   await handleStartError("Error: spawn kakehashi ENOENT", ui);
   expect(opened).toEqual([]);
+});
+
+it("recognizes the library's start-failure notification", () => {
+  expect(
+    isStartFailureNotification(
+      "kakehashi client: couldn't create connection to server.",
+    ),
+  ).toBe(true);
+});
+
+it("does not match other client error notifications", () => {
+  expect(
+    isStartFailureNotification("Request textDocument/completion failed."),
+  ).toBe(false);
 });
