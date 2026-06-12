@@ -1,6 +1,7 @@
 **/*.map
 .github/
 .gitignore
+.oxfmtrc.json
 bun.lock
 Makefile
 .vscode

@@ -5,6 +5,8 @@ VSIX := kakehashi-$(VERSION).vsix
 
 check:
 	bun run typecheck
+	bun run lint
+	bun run fmt:check
 	bun run test
 
 package: check
