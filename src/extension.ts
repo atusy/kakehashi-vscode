@@ -6,7 +6,11 @@ import {
   DocumentFilter,
   Trace,
 } from "vscode-languageclient/node";
-import { handleStartError, StartErrorUi } from "./startError";
+import {
+  handleStartError,
+  isStartFailureNotification,
+  StartErrorUi,
+} from "./startError";
 
 const FIRST_RUN_KEY = "kakehashi.firstRunNoticeShown";
 
@@ -35,6 +39,23 @@ interface KakehashiConfig {
   env: Record<string, string> | null;
   initializationOptions: JsonObject | null;
   traceServer: TraceServerValue;
+}
+
+class KakehashiLanguageClient extends LanguageClient {
+  override error(
+    message: string,
+    data?: unknown,
+    showNotification?: boolean | "force",
+  ): void {
+    // The library force-notifies on start failure before rejecting start(),
+    // and offers no option to opt out. handleStartError already covers every
+    // start failure, so keep this one log-only to avoid a duplicate dialog.
+    if (isStartFailureNotification(message)) {
+      super.error(message, data, false);
+      return;
+    }
+    super.error(message, data, showNotification);
+  }
 }
 
 let client: LanguageClient | undefined;
@@ -107,7 +128,7 @@ async function startClient(context: vscode.ExtensionContext): Promise<void> {
     initializationOptions: config.initializationOptions,
   };
 
-  const nextClient = new LanguageClient(
+  const nextClient = new KakehashiLanguageClient(
     "kakehashi",
     "kakehashi",
     serverOptions,
