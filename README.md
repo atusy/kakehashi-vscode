@@ -64,6 +64,21 @@ If the executable is missing, the extension shows a dialog with a
 **Visit download page** button that opens the
 [GitHub Releases](https://github.com/atusy/kakehashi/releases) page.
 
+## Release
+
+Releases are tag-driven. Pushing a `v*` tag runs the Release workflow,
+which publishes the extension to the VS Code Marketplace and Open VSX,
+and creates a GitHub release with the `.vsix` attached:
+
+```sh
+npm version patch -m "chore(release): %s"
+git push origin main --follow-tags
+```
+
+The workflow requires the `VSCE_PAT` and `OVSX_PAT` repository secrets.
+To release manually instead, run `make release` with the same variables
+set in the environment.
+
 ## License
 
 MIT
