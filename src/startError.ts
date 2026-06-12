@@ -1,8 +1,5 @@
 export interface StartErrorUi {
-  showErrorMessage(
-    message: string,
-    ...actions: string[]
-  ): Thenable<string | undefined>;
+  showErrorMessage(message: string, ...actions: string[]): Thenable<string | undefined>;
   openExternal(url: string): Thenable<boolean>;
 }
 
@@ -14,10 +11,7 @@ export function formatError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-export async function handleStartError(
-  error: unknown,
-  ui: StartErrorUi,
-): Promise<void> {
+export async function handleStartError(error: unknown, ui: StartErrorUi): Promise<void> {
   const message = formatError(error);
   if (!message.includes("ENOENT")) {
     await ui.showErrorMessage(`Failed to start kakehashi: ${message}`);

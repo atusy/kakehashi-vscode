@@ -1,9 +1,5 @@
 import { expect, it } from "vitest";
-import {
-  handleStartError,
-  isStartFailureNotification,
-  StartErrorUi,
-} from "./startError";
+import { handleStartError, isStartFailureNotification, StartErrorUi } from "./startError";
 
 function fakeUi(selectedAction?: string) {
   const shown: { message: string; actions: string[] }[] = [];
@@ -25,9 +21,7 @@ it("reports other start failures without offering the download page", async () =
   const { ui, shown } = fakeUi();
   await handleStartError(new Error("Connection to server got closed."), ui);
   expect(shown).toHaveLength(1);
-  expect(shown[0].message).toBe(
-    "Failed to start kakehashi: Connection to server got closed.",
-  );
+  expect(shown[0].message).toBe("Failed to start kakehashi: Connection to server got closed.");
   expect(shown[0].actions).toHaveLength(0);
 });
 
@@ -55,14 +49,10 @@ it("does not open anything when the user dismisses the dialog", async () => {
 
 it("recognizes the library's start-failure notification", () => {
   expect(
-    isStartFailureNotification(
-      "kakehashi client: couldn't create connection to server.",
-    ),
+    isStartFailureNotification("kakehashi client: couldn't create connection to server."),
   ).toBe(true);
 });
 
 it("does not match other client error notifications", () => {
-  expect(
-    isStartFailureNotification("Request textDocument/completion failed."),
-  ).toBe(false);
+  expect(isStartFailureNotification("Request textDocument/completion failed.")).toBe(false);
 });

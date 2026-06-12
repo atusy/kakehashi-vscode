@@ -6,11 +6,7 @@ import {
   DocumentFilter,
   Trace,
 } from "vscode-languageclient/node";
-import {
-  handleStartError,
-  isStartFailureNotification,
-  StartErrorUi,
-} from "./startError";
+import { handleStartError, isStartFailureNotification, StartErrorUi } from "./startError";
 
 const FIRST_RUN_KEY = "kakehashi.firstRunNoticeShown";
 
@@ -22,13 +18,7 @@ type DocumentSelectorPattern = {
 
 type DocumentSelectorEntry = string | DocumentSelectorPattern;
 
-type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | Json[]
-  | { [key: string]: Json };
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 
 type JsonObject = { [key: string]: Json };
 type TraceServerValue = "off" | "messages" | "verbose";
@@ -42,11 +32,7 @@ interface KakehashiConfig {
 }
 
 class KakehashiLanguageClient extends LanguageClient {
-  override error(
-    message: string,
-    data?: unknown,
-    showNotification?: boolean | "force",
-  ): void {
+  override error(message: string, data?: unknown, showNotification?: boolean | "force"): void {
     // The library force-notifies on start failure before rejecting start(),
     // and offers no option to opt out. handleStartError already covers every
     // start failure, so keep this one log-only to avoid a duplicate dialog.
@@ -61,26 +47,16 @@ class KakehashiLanguageClient extends LanguageClient {
 let client: LanguageClient | undefined;
 
 const startErrorUi: StartErrorUi = {
-  showErrorMessage: (message, ...actions) =>
-    vscode.window.showErrorMessage(message, ...actions),
+  showErrorMessage: (message, ...actions) => vscode.window.showErrorMessage(message, ...actions),
   openExternal: (url) => vscode.env.openExternal(vscode.Uri.parse(url)),
 };
 
-export async function activate(
-  context: vscode.ExtensionContext,
-): Promise<void> {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "kakehashi.configureDocumentSelector",
-      () =>
-        vscode.commands.executeCommand(
-          "workbench.action.openSettings",
-          "kakehashi.documentSelector",
-        ),
+    vscode.commands.registerCommand("kakehashi.configureDocumentSelector", () =>
+      vscode.commands.executeCommand("workbench.action.openSettings", "kakehashi.documentSelector"),
     ),
-    vscode.commands.registerCommand("kakehashi.restartServer", () =>
-      restartClient(context),
-    ),
+    vscode.commands.registerCommand("kakehashi.restartServer", () => restartClient(context)),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (
         e.affectsConfiguration("kakehashi.command") ||
@@ -146,16 +122,12 @@ async function stopClient(): Promise<void> {
   await c.stop();
 }
 
-async function restartClient(
-  context: vscode.ExtensionContext,
-): Promise<void> {
+async function restartClient(context: vscode.ExtensionContext): Promise<void> {
   await stopClient();
   await startClientSafely(context);
 }
 
-async function startClientSafely(
-  context: vscode.ExtensionContext,
-): Promise<void> {
+async function startClientSafely(context: vscode.ExtensionContext): Promise<void> {
   try {
     await startClient(context);
   } catch (error) {
@@ -181,9 +153,7 @@ function getConfiguration(): KakehashiConfig {
     command: cfg.get<string[]>("command") ?? ["kakehashi"],
     documentSelector,
     env: isStringRecord(rawEnv) ? rawEnv : null,
-    initializationOptions: isJsonObject(rawInitializationOptions)
-      ? rawInitializationOptions
-      : null,
+    initializationOptions: isJsonObject(rawInitializationOptions) ? rawInitializationOptions : null,
     traceServer: isTraceServerValue(rawTraceServer) ? rawTraceServer : "off",
   };
 }
@@ -210,12 +180,7 @@ function isStringRecord(v: unknown): v is Record<string, string> {
 }
 
 function isJson(v: unknown): v is Json {
-  if (
-    v === null ||
-    typeof v === "string" ||
-    typeof v === "number" ||
-    typeof v === "boolean"
-  ) {
+  if (v === null || typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
     return true;
   }
   if (Array.isArray(v)) {
@@ -250,19 +215,13 @@ function warnInvalidSelectorEntry(item: unknown): void {
   );
 }
 
-function normalizeDocumentSelector(
-  entries: DocumentSelectorEntry[],
-): DocumentFilter[] {
+function normalizeDocumentSelector(entries: DocumentSelectorEntry[]): DocumentFilter[] {
   return entries.map((entry) =>
-    typeof entry === "string"
-      ? ({ language: entry } as DocumentFilter)
-      : (entry as DocumentFilter),
+    typeof entry === "string" ? ({ language: entry } as DocumentFilter) : (entry as DocumentFilter),
   );
 }
 
-async function maybeShowFirstRunNotice(
-  context: vscode.ExtensionContext,
-): Promise<void> {
+async function maybeShowFirstRunNotice(context: vscode.ExtensionContext): Promise<void> {
   if (context.globalState.get<boolean>(FIRST_RUN_KEY)) return;
   await context.globalState.update(FIRST_RUN_KEY, true);
   const action = await vscode.window.showInformationMessage(
@@ -270,8 +229,6 @@ async function maybeShowFirstRunNotice(
     "Open Settings",
   );
   if (action === "Open Settings") {
-    await vscode.commands.executeCommand(
-      "kakehashi.configureDocumentSelector",
-    );
+    await vscode.commands.executeCommand("kakehashi.configureDocumentSelector");
   }
 }
