@@ -1,4 +1,4 @@
-VERSION := $(shell node -p "require('./package.json').version")
+VERSION := $(shell bun -p "require('./package.json').version")
 VSIX := kakehashi-$(VERSION).vsix
 
 .PHONY: check package release
