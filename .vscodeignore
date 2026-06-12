@@ -1,5 +1,8 @@
 **/*.map
+.github/
 .gitignore
+bun.lock
+Makefile
 .vscode
 .vscode/
 __ignored/

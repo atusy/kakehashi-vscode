@@ -4,8 +4,8 @@ VSIX := kakehashi-$(VERSION).vsix
 .PHONY: check package release
 
 check:
-	npm run typecheck
-	npm test
+	bun run typecheck
+	bun run test
 
 package: check
 	bunx @vscode/vsce package
